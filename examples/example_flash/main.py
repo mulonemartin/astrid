@@ -46,9 +46,12 @@ def success():
 
 if __name__ == '__main__':
     options = {
+        'SERVER': 'wsgiref',
+        'IP': '0.0.0.0',
+        'PORT': 8000,
         'TEMPLATES_FOLDER': 'templates/',
         'STATIC_FOLDER': os.path.abspath('../static')
     }
     app = WSGIApplication(options)
-    run(app)
+    run(app, server=options['SERVER'], host=options['IP'], port=options['PORT'])
 

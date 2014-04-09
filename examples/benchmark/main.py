@@ -15,24 +15,21 @@ from astrid.html.helpers import tag
 from astrid.html.forms import Form
 from astrid.db.dal import Field
 from astrid.html.validators import IS_INT_IN_RANGE, IS_NOT_EMPTY, \
-                            IS_EMAIL, IS_TIME, IS_DATE, IS_DATETIME, IS_IN_SET
+                            IS_TIME, IS_DATE, IS_DATETIME, IS_IN_SET
 
 
-@expose()
-def index():
+from config import options
+
+
+@expose(template='index.html')
+def test_template():
     message = "This is a test"
     return dict(message=message)
 
 
-@expose()
-def test():
-    message = "This is a test"
-    return message
-
-
-@expose()
-def test2():
-    message = "This is a test 2"
+@expose(template='index.html')
+def no_template():
+    message = "This is a test, no template using direct strign"
     return message
 
 
@@ -47,14 +44,8 @@ def redirect():
 
 
 @expose()
-def set():
+def session():
     local.session.set('mykey', 'value 1')
-    message = "Session set 'mykey': 'value 1'"
-    return message
-
-
-@expose()
-def get():
     my_value = local.session.get('mykey')
     message = "Session get 'mykey': '%s'" % my_value
     return message
@@ -116,44 +107,6 @@ def form():
 @expose(template='index.html')
 def form2():
     form = Form(
-                Field('first_name', label='First Name'),
-                Field('last_name', label='Last Name'),
-                Field('age', 'integer', default=0, label='Age', requires=IS_INT_IN_RANGE(1,5))
-                ).process()
-    if form.accepted:
-        raise HTTPRedirect('index')
-
-    return dict(message=form)
-
-
-@expose(template='index.html')
-def form3():
-    form = Form(
-                Field('first_name', length=128, default='',
-                    requires=IS_NOT_EMPTY()),
-                Field('last_name', length=128, default='',
-                    requires=IS_NOT_EMPTY()),
-                Field('email', length=512, default='',
-                    requires=IS_EMAIL()),
-                Field('username', length=128, default=''),
-                Field('password', 'password', length=512,
-                    readable=False),
-                Field('registration_key', length=512,
-                    writable=False, readable=False, default=''),
-                Field('reset_password_key', length=512,
-                    writable=False, readable=False, default=''),
-                Field('registration_id', length=512,
-                    writable=False, readable=False, default=''),
-            ).process()
-    if form.accepted:
-        raise HTTPRedirect('index')
-
-    return dict(message=form)
-
-
-@expose(template='index.html')
-def form4():
-    form = Form(
                 Field('name', requires=IS_NOT_EMPTY()),
                 Field('area', 'text'),
                 Field('check', 'boolean', default=True),
@@ -173,31 +126,9 @@ def form4():
     return dict(message=form)
 
 
-@expose(template='index.html')
-def form5():
-    if local.request.method == 'GET':
-        arca = 1
-    else:
-        arca = 2
-
-    form = Form(Field('name'), Field('age', default=str(arca))).process()
-    if form.accepted:
-        print "Accepted: %s" % form.vars['age']
-        raise HTTPRedirect('index')
-
-    return dict(message=form)
-
-
 
 
 if __name__ == '__main__':
-    options = {
-        'SERVER': 'wsgiref',
-        'IP': '0.0.0.0',
-        'PORT': 8000,
-        'TEMPLATES_FOLDER': 'templates/',
-        'STATIC_FOLDER': os.path.abspath('../static')
-    }
     app = WSGIApplication(options)
     run(app, server=options['SERVER'], host=options['IP'], port=options['PORT'])
 

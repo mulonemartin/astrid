@@ -117,7 +117,11 @@ class expose(object):
                 output = options['render_template'](filename = match_obj.template,
                                             path = options['TEMPLATES_FOLDER'],
                                             context = output)
-                response.write(output)
+
+                if options['SERVER'] in ['wsgiref']:  # wsgiref only support utf-8
+                    response.write(output.encode('utf-8'))
+                else:
+                    response.write(output)
                 return response
             else:
                 logging.error("Template file doesn't exist")

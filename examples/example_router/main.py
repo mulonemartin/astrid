@@ -3,7 +3,7 @@
 
 #You don't have to do this two lines if you are using in production trought pypi.
 import sys, os
-sys.path.append(os.path.join(os.path.dirname(__file__), "../../../"))
+sys.path.append(os.path.join(os.path.dirname(__file__), "../../"))
 
 
 from astrid.web.wsgi import WSGIApplication
@@ -50,9 +50,12 @@ def something(any):
 
 if __name__ == '__main__':
     options = {
+        'SERVER': 'wsgiref',
+        'IP': '0.0.0.0',
+        'PORT': 8000,
         'TEMPLATES_FOLDER': 'templates/',
         'STATIC_FOLDER': os.path.abspath('../static')
     }
     app = WSGIApplication(options)
-    run(app)
+    run(app, server=options['SERVER'], host=options['IP'], port=options['PORT'])
 
