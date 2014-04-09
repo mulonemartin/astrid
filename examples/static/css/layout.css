@@ -1,0 +1,40 @@
+/*!
+Layout
+ */
+/* Override some defaults */
+
+body {
+    /*background: url("../images/renzler.gif") repeat scroll 0 0 transparent;*/
+
+}
+.container-center {
+    /*
+    background-color: #fff; padding: 15px;
+    border:1px solid #2a9bff;
+    border-radius:10px;
+    -moz-border-radius:10px;
+    -webkit-border-radius:10px;
+    */
+}
+.widget-front {
+    display: block;
+    line-height: 20px;
+    padding: 12px;}
+
+/* Web2py */
+td.w2p_fl, td.w2p_fw, td.w2p_fc { vertical-align:top; }
+td.w2p_fl { text-align:right; }
+td.w2p_fl,  td.w2p_fw {padding-right: 7px;}
+
+footer {padding-top: 10px; margin-top: 20px; border-top: 4px solid #ddd; margin-bottom: 40px; color: #919191;}
+.flash {
+    display: none;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    margin-top: -18px;}
+.flash.alert {margin-bottom: 10px !important;}
+div.error { color: #ec6f5a;}
+
+
