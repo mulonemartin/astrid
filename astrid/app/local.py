@@ -20,7 +20,7 @@ class LocalThread(threading.local):
         self.environ = environ
         self.request = HTTPRequest(environ, encoding=encoding, options=options)
         self.response = HTTPResponse(options['CONTENT_TYPE'], options['ENCODING'])
-        self.session = SessionManager(options)
+        #self.session = SessionManager(options)
         self.options = options
         self.flash = FlashManager(options)
 
