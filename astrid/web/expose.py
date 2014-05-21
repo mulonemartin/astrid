@@ -6,8 +6,6 @@ import logging
 
 from astrid.app.local import local
 from astrid.web.wrapper import WrapWithContextManager
-from astrid.http.response import not_found, internal_error
-from astrid.app.logger import logging
 from astrid.web.url import url
 from astrid.routing.router import PathRouter
 from astrid.http.response import JSONResponse, HTTPResponse, HTTPError
@@ -26,11 +24,11 @@ class expose(object):
 
 
     def __init__(self,
-                 path = None,
-                 name = None,
-                 template = None,
-                 contexts = None,
-                 skip_list = None
+                 path=None,
+                 name=None,
+                 template=None,
+                 contexts=None,
+                 skip_list=None
                  ):
         if callable(path):
             raise SyntaxError('@expose(), not @expose')
@@ -68,7 +66,7 @@ class expose(object):
 
     @staticmethod
     def run_dispatcher(options):
-        " maps the path_info into a function call "
+        """ maps the path_info into a function call """
 
         request = local.request
         response = local.response
@@ -76,11 +74,11 @@ class expose(object):
         output = None
         is_match = False
         if not request.path.endswith('/'):
-            request.path = request.path + '/'
+            request.path += '/'
         match_obj, match_dict = expose.router.match(request.path)
         if match_obj:
             try:
-                del match_dict['route_name']  #remove route_name key from dictionary
+                del match_dict['route_name']  # remove route_name key from dictionary
             except KeyError:
                 pass
 
@@ -94,12 +92,10 @@ class expose(object):
         if isinstance(output, HTTPResponse):
             return output
         elif isinstance(output, basestring):
-            # render simple base string
-            response.write(output)
+            response.write(output)  # render simple base string
             return response
         elif isinstance(output, dict):
-            # So this render template
-            if not 'app_local' in output:
+            if not 'app_local' in output:  # So this render template
                 output['app_local'] = local
 
             output['flash'] = local.flash  # flash alert
@@ -127,8 +123,7 @@ class expose(object):
                 logging.error("Template file doesn't exist")
 
         elif isinstance(output, JSONResponse):
-            # Render if is json data
-            return output.render()
+            return output.render()  # Render if is json data
         else:
             logging.error("The function need to return data type of: string / dict() or JSONResponse")
             raise HTTPError(500)

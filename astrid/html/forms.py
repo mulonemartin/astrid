@@ -19,44 +19,44 @@ __all__ = ['Form']
 class Form(TAG):
 
     @staticmethod
-    def widget_string(name,value,_class='string',_id=None, _class_input=''):
-        return tag.input(_type='text',_name=name,_value=value or '',
-                         _class=_class + ' ' + _class_input,_id=_id)
+    def widget_string(name, value, _class='string',_id=None, _class_input=''):
+        return tag.input(_type='text', _name=name, _value=value or '',
+                         _class=_class + ' ' + _class_input, _id=_id)
 
     @staticmethod
-    def widget_text(name,value,_class='text',_id=None, _class_input=''):
+    def widget_text(name, value, _class='text', _id=None, _class_input=''):
         return tag.textarea(value or '', _name=name,
                             _class=_class + ' ' + _class_input, _id=_id, _rows=5)
 
     @staticmethod
-    def widget_integer(name,value,_class='integer',_id=None, _class_input=''):
-        return Form.widget_string(name,value,_class + ' ' + _class_input,_id)
+    def widget_integer(name, value, _class='integer', _id=None, _class_input=''):
+        return Form.widget_string(name, value, _class + ' ' + _class_input, _id)
 
     @staticmethod
-    def widget_double(name,value,_class='double',_id=None, _class_input=''):
-        return Form.widget_string(name,value,_class + ' ' + _class_input,_id)
+    def widget_double(name, value, _class='double', _id=None, _class_input=''):
+        return Form.widget_string(name, value, _class + ' ' + _class_input, _id)
 
     @staticmethod
-    def widget_date(name,value,_class='date',_id=None, _class_input=''):
-        return Form.widget_string(name,value,_class + ' ' + _class_input,_id)
+    def widget_date(name, value, _class='date', _id=None, _class_input=''):
+        return Form.widget_string(name, value, _class + ' ' + _class_input, _id)
 
     @staticmethod
-    def widget_time(name,value,_class='time',_id=None, _class_input=''):
-        return Form.widget_string(name,value,_class + ' ' + _class_input,_id)
+    def widget_time(name, value, _class='time', _id=None, _class_input=''):
+        return Form.widget_string(name, value, _class + ' ' + _class_input, _id)
 
     @staticmethod
-    def widget_datetime(name,value,_class='datetime',_id=None, _class_input=''):
-        return Form.widget_string(name,value,_class + ' ' + _class_input,_id)
+    def widget_datetime(name, value, _class='datetime', _id=None, _class_input=''):
+        return Form.widget_string(name, value, _class + ' ' + _class_input, _id)
 
     @staticmethod
-    def widget_password(name,value,_class='password',_id=None, _class_input=''):
-        return tag.input(_type='password',_name=name,_value=value or '',
-            _class=_class + ' ' + _class_input,_id=_id)
+    def widget_password(name, value, _class='password', _id=None, _class_input=''):
+        return tag.input(_type='password', _name=name, _value=value or '',
+                         _class=_class + ' ' + _class_input, _id=_id)
 
     @staticmethod
-    def widget_upload(name,value,_class='file',_id=None, _class_input=''):
-        return tag.input(_type='file',_name=name,_value=value or '',
-            _class=_class + ' ' + _class_input,_id=_id)
+    def widget_upload(name, value, _class='file', _id=None, _class_input=''):
+        return tag.input(_type='file', _name=name, _value=value or '',
+                         _class=_class + ' ' + _class_input, _id=_id)
 
     @staticmethod
     def widget_boolean(name,value,_class='boolean',_id=None, _class_input=''):
@@ -65,27 +65,27 @@ class Form(TAG):
                          _class=_class + ' ' + _class_input,_id=_id)
 
     @staticmethod
-    def widget_select(name,value,options,_class='',_id=None, _class_input=''):
-        def selected(k): 'selected' if str(value)==str(k) else None
+    def widget_select(name, value, options, _class='', _id=None, _class_input=''):
+        def selected(k): 'selected' if str(value) == str(k) else None
         select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input, _id=_id)
-        for k,n in options:
-            if not k or k=='':
+        for k, n in options:
+            if not k or k == '':
                 continue
 
-            if str(value)==str(k):
-                select_tag.append(tag.option(n,_value=k, _selected=''))
+            if str(value) == str(k):
+                select_tag.append(tag.option(n, _value=k, _selected=''))
             else:
-                select_tag.append(tag.option(n,_value=k))
+                select_tag.append(tag.option(n, _value=k))
         return select_tag
 
     @staticmethod
-    def widget_radio(name,value,options,_class='',_id=None, _class_input=''):
+    def widget_radio(name, value, options, _class='', _id=None, _class_input=''):
         div_tag = []
-        for k,n in options:
-            if not k or k=='':
+        for k, n in options:
+            if not k or k == '':
                 continue
             label = tag.label(_class='radio')
-            if value==k:
+            if value == k:
                 label.append(tag.input(_type='radio', _name=name, _value=k, _checked='', _id=_id))
             else:
                 label.append(tag.input(_type='radio', _name=name, _value=k, _id=_id))
@@ -94,7 +94,7 @@ class Form(TAG):
         return ''.join([str(item) for item in div_tag])
 
     @staticmethod
-    def widget_multiple(name,values,options,_class='',_id=None, _class_input=''):
+    def widget_multiple(name, values, options, _class='', _id=None, _class_input=''):
         values = values or []
         #def selected(k): 'selected' if k in values else None
         def selected(k):
@@ -104,46 +104,58 @@ class Form(TAG):
                 return None
 
             #'selected' if str(k) in values else None
-        select_tag = tag.select(_name=name,_class=_class + ' ' + _class_input,
-                                _multiple='multiple',_id=name)
-        for k,n in options:
-            select_tag.append(tag.option(n,_value=k,_selected=selected(k)))
+        select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input,
+                                _multiple='multiple', _id=name)
+        for k, n in options:
+            select_tag.append(tag.option(n, _value=k, _selected=selected(k)))
         return select_tag
 
     @staticmethod
     def widget_hidden(name, value, _class='hidden', _id=None):
         return tag.input(_type='hidden', _name=name, _value=value or '',
-            _class=_class, _id=_id)
+                         _class=_class, _id=_id)
 
     @staticmethod
-    def widget_upload_custom(name,value,_class='file',_id=None, _class_input=''):
-        return tag.input(_type='file',_name=name, _value=value or '',
-            _class=_class + ' ' + _class_input, _id=_id, _onchange="handleFiles(this.files)")
+    def widget_upload_custom(name, value, _class='file', _id=None, _class_input=''):
+        return tag.input(_type='file', _name=name, _value=value or '',
+                         _class=_class + ' ' + _class_input, _id=_id, _onchange="handleFiles(this.files)")
 
     @staticmethod
-    def widget_autocomplete(name,value,options,_class='string',_id=None, _class_input=''):
+    def widget_autocomplete(name, value, options, _class='string', _id=None, _class_input=''):
         """
-        <input type="text" class="span6 m-wrap" style="margin: 0 auto;" data-provide="typeahead" data-items="4" data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,&quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,&quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,&quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,&quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,&quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,&quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,&quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,&quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,&quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,&quot;Wisconsin&quot;,&quot;Wyoming&quot;]" />
+        <input type="text" class="span6 m-wrap" style="margin: 0 auto;" data-provide="typeahead" data-items="4"
+        data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;
+        ,&quot;California&quot;,&quot;Colorado&quot;,&quot;Connecticut&quot;,&quot;Delaware&quot;,
+        &quot;Florida&quot;,&quot;Georgia&quot;,&quot;Hawaii&quot;,&quot;Idaho&quot;,&quot;Illinois&quot;,
+        &quot;Indiana&quot;,&quot;Iowa&quot;,&quot;Kansas&quot;,&quot;Kentucky&quot;,&quot;Louisiana&quot;,
+        &quot;Maine&quot;,&quot;Maryland&quot;,&quot;Massachusetts&quot;,&quot;Michigan&quot;,
+        &quot;Minnesota&quot;,&quot;Mississippi&quot;,&quot;Missouri&quot;,&quot;Montana&quot;,
+        &quot;Nebraska&quot;,&quot;Nevada&quot;,&quot;New Hampshire&quot;,&quot;New Jersey&quot;,
+        &quot;New Mexico&quot;,&quot;New York&quot;,&quot;North Dakota&quot;,&quot;North Carolina&quot;,
+        &quot;Ohio&quot;,&quot;Oklahoma&quot;,&quot;Oregon&quot;,&quot;Pennsylvania&quot;,&quot;Rhode Island&quot;,
+        &quot;South Carolina&quot;,&quot;South Dakota&quot;,&quot;Tennessee&quot;,&quot;Texas&quot;,&quot;Utah&quot;,
+        &quot;Vermont&quot;,&quot;Virginia&quot;,&quot;Washington&quot;,&quot;West Virginia&quot;,
+        &quot;Wisconsin&quot;,&quot;Wyoming&quot;]" />
         """
-        input = tag.input(_type='text',_name=name,_value=value or '', _class=_class + ' ' + _class_input,_id=_id)
+        input = tag.input(_type='text', _name=name ,_value=value or '', _class=_class + ' ' + _class_input, _id=_id)
         input.attributes['_data-provide'] = "typeahead"
         input.attributes['_data-items'] = "4"
         data = ['"%s"' % k for k,n in options]
-        input.attributes['_data-source'] = '[%s]'%','.join(data)
+        input.attributes['_data-source'] = '[%s]' % ','.join(data)
 
         return input
 
     def __init__(self, *fields, **attributes):
-        attributes['_action'] = attributes.get('_action','')
-        attributes['_method'] = attributes.get('_method','POST')
-        attributes['_enctype'] = attributes.get('_enctype','multipart/form-data')
-        attributes['submit'] = attributes.get('submit','Submit')
-        attributes['formstyle'] = attributes.get('formstyle',Form.style_bootstrap)
+        attributes['_action'] = attributes.get('_action', '')
+        attributes['_method'] = attributes.get('_method', 'POST')
+        attributes['_enctype'] = attributes.get('_enctype', 'multipart/form-data')
+        attributes['submit'] = attributes.get('submit', 'Submit')
+        attributes['formstyle'] = attributes.get('formstyle', Form.style_bootstrap)
         self.ui = attributes.get('ui', {})
         self.attributes = attributes
         self.fields = fields
-        self.errors = {} #Storage()
-        self.vars = {} #Storage()
+        self.errors = {}
+        self.vars = {}
         self.input_vars = None
         self.processed = False
         self.submitted = False
@@ -170,20 +182,15 @@ class Form(TAG):
                 self.input_vars = local.request.form
 
             if local.request.method == 'GET':
-                self.getxsrf_token()
-                self.getresubmission()
+                self.setxsrf_token()
 
             elif local.request.method == 'POST':
-                # XSRF validation
+                # CSRF validation
                 if self.validate_xsrf_token():
                     self.valid_xsrf = True
 
-                # Resubmission Protection
-                if self.validate_resubmission():
-                    self.valid_resub = True
-
                 # validate input
-                if self.valid_xsrf and self.valid_resub:
+                if self.valid_xsrf:
                     self.submitted = True
                     for field in self.fields:
                         value = self.input_vars.get(field.name)
@@ -196,11 +203,14 @@ class Form(TAG):
                             self.vars[field.name] = value
 
                     #Esto hacemos para agregar los hidden a los form vars
-                    for key, h_value in self.attributes.get('hidden',{}).iteritems():
+                    for key, h_value in self.attributes.get('hidden', {}).iteritems():
                         self.vars[key] = h_value
 
                     if not self.errors:
                         self.accepted = True
+
+                # We have to generate a new token
+                self.setxsrf_token()
 
         # reset default values in form
         if not self.submitted or (self.accepted and not keepvalues):
@@ -212,7 +222,7 @@ class Form(TAG):
     @staticmethod
     def get_field_widget(form, field, name, value, id, _class_input=''):
         if field.widget:
-            input = field.widget(name,value,_id=id, _class_input=_class_input)
+            input = field.widget(name, value, _id=id, _class_input=_class_input)
         else:
             # special treatment to selects, cause requires options
             if field.type in ['select', 'multiple', 'radio', 'autocomplete']:
@@ -225,9 +235,9 @@ class Form(TAG):
                     else:
                         raise SyntaxError(
                             'widget cannot determine options of %s' % field)
-                input = getattr(form,'widget_'+field.type)(name,value,options,_id=id, _class_input=_class_input)
+                input = getattr(form, 'widget_'+field.type)(name, value, options, _id=id, _class_input=_class_input)
             else:
-                input = getattr(form,'widget_'+field.type)(name,value,_id=id, _class_input=_class_input)
+                input = getattr(form, 'widget_'+field.type)(name, value, _id=id, _class_input=_class_input)
         return input
 
     @staticmethod
@@ -321,7 +331,7 @@ class Form(TAG):
 
         hiddens = tag.div()
         hidden_items = False
-        for key, value in attr.get('hidden',{}).iteritems():
+        for key, value in attr.get('hidden', {}).iteritems():
             hidden_items = True
             hiddens.append(tag.input(_name=key, _type='hidden',_value=value))
 
@@ -348,24 +358,36 @@ class Form(TAG):
         if self.formkey_xsrf:
             return self.formkey_xsrf
 
-        options = local.options
         cookies = local.request.cookies
-        response = local.response
-        request = local.request
 
         form_name = 'xsrf-' + self.formname
 
         if form_name in cookies:
             xsrf_token = cookies[form_name]
         else:
-            xsrf_token = shrink_uuid(uuid4())
-            response.cookies.append(HTTPCookie(
-                                    form_name,
-                                    value=xsrf_token,
-                                    path=request.root_path,
-                                    httponly=True,
-                                    options=options))
+            xsrf_token = self.setxsrf_token()
+
         self.formkey_xsrf = xsrf_token
+        return xsrf_token
+
+    def setxsrf_token(self):
+
+        options = local.options
+        response = local.response
+        request = local.request
+
+        form_name = 'xsrf-' + self.formname
+
+        xsrf_token = shrink_uuid(uuid4())
+        response.cookies.append(HTTPCookie(
+                                form_name,
+                                value=xsrf_token,
+                                path=request.root_path,
+                                httponly=True,
+                                options=options))
+
+        self.formkey_xsrf = xsrf_token
+
         return xsrf_token
 
     def delxsrf_token(self):
@@ -401,18 +423,15 @@ class Form(TAG):
 
         if self.formkey_resub:
             return self.formkey_resub
-        #if hasattr(self, '__resubmission'):
-        #    return self.__resubmission
 
         cookies = local.request.cookies
 
         resubmission_name = 'resub-' + self.formname
         if resubmission_name in cookies:
             counter = cookies[resubmission_name]
-            #self.__resubmission = counter
             self.formkey_resub = counter
         else:
-            counter = '0'
+            counter = '1'
             self.setresubmission(counter)
         return counter
 
@@ -429,7 +448,6 @@ class Form(TAG):
                         path=request.root_path,
                         httponly=True,
                         options=options))
-        #self.__resubmission = value
         self.formkey_resub = value
 
     def delresubmission(self):
@@ -462,40 +480,9 @@ class Form(TAG):
                 try:
                     counter = str(int(counter) + 1)
                     self.setresubmission(counter)
-                    return True
+                    if int(counter) <= 2:
+                        return True
+
                 except ValueError:
-                    self.setresubmission('0')
+                    self.setresubmission('1')
         return False
-
-
-class DALForm(Form):
-    def __init__(self, table, record=None, record_id=None, **attributes):
-        self.table = table
-        self.record = record or table(record_id)
-        fields = [field for field in table
-                  if field.type != 'id' and field.writable]
-        Form.__init__(self , *fields, **attributes)
-        self.id_prefix = table._tablename
-
-    def process(self, vars = None, keepvalues = True):
-        Form.process(self, vars, keepvalues = True)
-        if self.accepted:
-            if self.record:
-                self.record.update_record(**self.vars)
-            else:
-                self.vars['id'] = self.table.insert(**self.vars)
-        if not self.submitted or self.processed and not keepvalues:
-            for field in self.fields:
-                value = self.record[field.name] if self.record \
-                    else field.default
-                self.input_vars[field.name] = field.formatter(value)
-        return self
-
-
-def test():
-    from dal import Field
-    form = Form(Field('name'),Field('age'))
-    print form
-
-if __name__ == '__main__':
-    test()

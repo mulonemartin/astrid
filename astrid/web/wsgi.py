@@ -10,7 +10,6 @@ from astrid.app.options import bootstrap_defaults
 from astrid.web.expose import expose
 
 
-
 REGEX_STATIC = re.compile('^/static/(?P<v>_\d+\.\d+\.\d+/)?(?P<f>.*?)$')
 
 

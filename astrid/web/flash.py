@@ -128,6 +128,7 @@ class FlashManager(BaseCookieManager):
     #    return xml
 
     def render_type(self, render_class):
+        """Only work using twitter bootstrap, see: http://getbootstrap.com"""
 
         xml = '''
         <div class="alert alert-%(render_class)s">
@@ -138,6 +139,59 @@ class FlashManager(BaseCookieManager):
                'message': xmlescape(self.message)}
 
         return xml
+
+
+    def render_dialog(self):
+        """Only work using twitter bootstrap, see: http://getbootstrap.com"""
+
+        self.load()
+        self.delete(self.cookie_name)
+        if self.message != "":
+            style = 'background-color: #428BCA; color: #fff;'
+            if self.type in ['info']:
+                style = 'background-color: #428BCA; color: #fff;'
+            elif self.type in ['warning']:
+                style = 'background-color: #c09853; color: #fff;'
+            elif self.type in ['error']:
+                style = 'background-color: #b94a48; color: #fff;'
+            elif self.type in ['success']:
+                style = 'background-color: #468847; color: #fff;'
+
+            xml = '''
+            <!-- Modal -->
+            <div class="modal fade" id="AstridShowAlertModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header" style="%(style)s">
+                            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                            <div style="height: 22px;"></div>
+                        </div>
+                        <div class="modal-body showalertmodal-body">
+
+                            %(message)s
+
+                        </div>
+                        <div class="modal-footer">
+                            <a class="btn btn-primary" href="#" data-dismiss="modal" aria-hidden="true">OK</a>
+                        </div>
+                    </div><!-- /.modal-content -->
+                </div><!-- /.modal-dialog -->
+            </div><!-- /.modal -->
+            <script>
+            $(document).ready(function() {
+                $('#AstridShowAlertModal').modal({
+                        keyboard: false
+                    });
+
+            });
+            </script>
+            ''' % {
+                'message': xmlescape(self.message),
+                'style': style
+            }
+            return xml
+        else:
+            return ''
 
 
 

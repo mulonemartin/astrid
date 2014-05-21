@@ -33,8 +33,8 @@ class MakoTemplate(BaseTemplate):
     def __call__(self, filename, path, context):
         filepath, file = os.path.split(filename)
         template = self.template_lookup.get_template(filename)
-        #return str(template.render(**context))
         return template.render(**context)
+        #return template.render_unicode(**context).encode('utf-8', 'replace')
 
 
 class TenjinTemplate(object):
