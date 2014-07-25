@@ -65,12 +65,13 @@ class Form(TAG):
                          _class=_class + ' ' + _class_input,_id=_id)
 
     @staticmethod
-    def widget_select(name, value, options, _class='', _id=None, _class_input=''):
+    def widget_select(name, value, options, zero, _class='', _id=None, _class_input=''):
         def selected(k): 'selected' if str(value) == str(k) else None
         select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input, _id=_id)
         for k, n in options:
             if not k or k == '':
-                continue
+                if zero is None:
+                    continue
 
             if str(value) == str(k):
                 select_tag.append(tag.option(n, _value=k, _selected=''))
@@ -79,7 +80,26 @@ class Form(TAG):
         return select_tag
 
     @staticmethod
-    def widget_radio(name, value, options, _class='', _id=None, _class_input=''):
+    def widget_dynamic(name, value, options, zero, _class='', _id=None, _class_input=''):
+        def selected(k): 'selected' if str(value) == str(k) else None
+        select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input, _id=_id)
+        for k, n in options:
+            if not k or k == '':
+                if zero is None:
+                    continue
+
+            if str(value) == str(k):
+                select_tag.append(tag.option(n, _value=k, _selected=''))
+            else:
+                select_tag.append(tag.option(n, _value=k))
+
+        if value:
+            select_tag.append(tag.option('(seleccionado oculto)', _value=value, _selected=''))
+
+        return select_tag
+
+    @staticmethod
+    def widget_radio(name, value, options, zero, _class='', _id=None, _class_input=''):
         div_tag = []
         for k, n in options:
             if not k or k == '':
@@ -94,7 +114,7 @@ class Form(TAG):
         return ''.join([str(item) for item in div_tag])
 
     @staticmethod
-    def widget_multiple(name, values, options, _class='', _id=None, _class_input=''):
+    def widget_multiple(name, values, options, zero, _class='', _id=None, _class_input=''):
         values = values or []
         #def selected(k): 'selected' if k in values else None
         def selected(k):
@@ -225,17 +245,18 @@ class Form(TAG):
             input = field.widget(name, value, _id=id, _class_input=_class_input)
         else:
             # special treatment to selects, cause requires options
-            if field.type in ['select', 'multiple', 'radio', 'autocomplete']:
+            if field.type in ['select', 'multiple', 'radio', 'autocomplete', 'dynamic']:
                 requires = field.requires
                 if not isinstance(requires, (list, tuple)):
                     requires = [requires]
                 if requires:
                     if hasattr(requires[0], 'options'):
                         options = requires[0].options()
+                        zero = requires[0].zero
                     else:
                         raise SyntaxError(
                             'widget cannot determine options of %s' % field)
-                input = getattr(form, 'widget_'+field.type)(name, value, options, _id=id, _class_input=_class_input)
+                input = getattr(form, 'widget_'+field.type)(name, value, options, zero,  _id=id, _class_input=_class_input)
             else:
                 input = getattr(form, 'widget_'+field.type)(name, value, _id=id, _class_input=_class_input)
         return input

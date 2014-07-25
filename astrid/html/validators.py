@@ -363,8 +363,8 @@ class IS_IN_SET(Validator):
         labels=None,
         error_message='value not allowed',
         multiple=False,
-        zero='',
-        sort=False,
+        zero=None,
+        sort=False
     ):
         self.multiple = multiple
         if isinstance(theset, dict):
@@ -388,7 +388,7 @@ class IS_IN_SET(Validator):
             items = [(k, self.labels[i]) for (i, k) in enumerate(self.theset)]
         if self.sort:
             items.sort(options_sorter)
-        if zero and not self.zero is None and not self.multiple:
+        if not self.zero is None and not self.multiple:
             items.insert(0, ('', self.zero))
         return items
 
