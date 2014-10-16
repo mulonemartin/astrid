@@ -409,8 +409,8 @@ class HTTPJSONResponse(Exception):
         response = HTTPResponse(
             'application/json; charset=' + self.encoding,
             self.encoding)
-        #response.write_bytes(json_encode(self.items).encode(self.encoding))
-        response.write_bytes(json_encode(self.items))
+        response.write_bytes(json_encode(self.items).encode(self.encoding))
+        #response.write_bytes(json_encode(self.items))
         response.status_code = self.status_code
         return response
 
@@ -425,6 +425,6 @@ class JSONResponse(object):
         response = HTTPResponse(
             'application/json; charset=' + self.encoding,
             self.encoding)
-        #response.write_bytes(json_encode(self.items).encode(self.encoding))
-        response.write_bytes(json_encode(self.items))
+        response.write_bytes(json_encode(self.items).encode(self.encoding))
+        #response.write_bytes(json_encode(self.items))
         return response

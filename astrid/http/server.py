@@ -149,6 +149,37 @@ class GunicornServer(ServerAdapter):
         GunicornApplication().run()
 
 
+class GunicornServer2(ServerAdapter):
+    """ Untested. See http://gunicorn.org/configure.html for options. """
+    def run(self, handler):
+        import gunicorn.app.base
+        from gunicorn.six import iteritems
+        class StandaloneApplication(gunicorn.app.base.BaseApplication):
+
+            def __init__(self, app, options=None):
+                self.options = options or {}
+                self.application = app
+                super(StandaloneApplication, self).__init__()
+
+            def load_config(self):
+                config = dict([(key, value) for key, value in iteritems(self.options)
+                               if key in self.cfg.settings and value is not None])
+                for key, value in iteritems(config):
+                    self.cfg.set(key.lower(), value)
+
+            def load(self):
+                return self.application
+
+        options = {'bind': "%s:%d" % (self.host, int(self.port))}
+        try:
+            gunicorn_options = self.options['GUNICORN']
+            options.update(gunicorn_options)
+        except KeyError:
+            pass
+
+        StandaloneApplication(handler, options).run()
+
+
 class EventletServer(ServerAdapter):
     """ Untested """
     def run(self, handler):
@@ -195,6 +226,7 @@ server_names = {
     'rocket': RocketServer,
     'bjoern' : BjoernServer,
     'auto': AutoServer,
+    'gunicorn2': GunicornServer2,
     }
 
 
