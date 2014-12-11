@@ -95,7 +95,8 @@ def text(fonts, font_sizes=None, drawings=None, color='#5C87B2',
         for c in text:
             font = random.choice(fonts)
             c_width, c_height = draw.textsize(c, font=font)
-            char_image = Image.new('RGB', (c_width, c_height), (0, 0, 0))
+            co_width, co_height = font.getoffset(c)
+            char_image = Image.new('RGB', (c_width+co_width, c_height+co_height), (0, 0, 0))
             char_draw = Draw(char_image)
             char_draw.text((0, 0), c, font=font, fill=color())
             char_image = char_image.crop(char_image.getbbox())
