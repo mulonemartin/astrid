@@ -417,6 +417,74 @@ class IS_IN_SET(Validator):
         return (value, None)
 
 
+class IS_IN_SET_GROUP(Validator):
+    """
+    example::
+
+        INPUT(_type='text', _name='name',
+              requires=IS_IN_SET(['max', 'john'],zero=''))
+
+    the argument of IS_IN_SET must be a list or set
+
+    {
+    "Películas": [
+        (1, "Acción y Aventura"),
+        (2, "Animación"),
+        (3, "Comedia"),
+        (4, "Crimen y misterio"),
+        (5, "Documentales y biografías"),
+        (6, "Drama"),
+        (7, "Familia"),
+        (8, "Terror"),
+        (9, "Música y musicales"),
+        (10, "Romance"),
+        (11, "Ciencia ficción y fantasía")
+        ],
+
+    "Series": [
+        (201, "Acción y Aventura"),
+        (202, "Animación"),
+        (203, "Comedia"),
+        (204, "Crimen y misterio"),
+        (205, "Documentales y biografías"),
+        (206, "Drama"),
+        (207, "Familia"),
+        (208, "Terror"),
+        (209, "Música y musicales"),
+        (2010, "Romance"),
+        (2011, "Ciencia ficción y fantasía")
+        ]
+    }
+
+        
+    """
+
+    def __init__(
+        self,
+        theset,
+        labels=None,
+        zero=None,
+        error_message='value not allowed'        
+    ):        
+        self.theset = theset
+        self.error_message = error_message
+        self.zero = zero
+
+    def options(self):
+        return self.theset
+
+    def __call__(self, value):
+
+        print value
+        options = self.options()
+        for group_key, group_value in options.iteritems():            
+            for item_id, item_text in group_value:
+                if str(value) == str(item_id):
+                    return (value, None)
+                
+        return (value, self.error_message)
+
+
 regex1 = re.compile('\w+\.\w+')
 regex2 = re.compile('%\((?P<name>[^\)]+)\)s')
 

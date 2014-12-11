@@ -80,6 +80,20 @@ class Form(TAG):
         return select_tag
 
     @staticmethod
+    def widget_select_group(name, value, options, zero, _class='', _id=None, _class_input=''):        
+        select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input, _id=_id)
+        for group_key, group_value in options.iteritems():
+            optgrp = tag.optgroup(_label=group_key)
+            for item_id, item_text in group_value:
+                if str(value) == str(item_id):
+                    optgrp.append(tag.option(item_text, _value=item_id, _selected=''))
+                else:
+                    optgrp.append(tag.option(item_text, _value=item_id))
+            select_tag.append(optgrp)
+            
+        return select_tag
+
+    @staticmethod
     def widget_dynamic(name, value, options, zero, _class='', _id=None, _class_input=''):
         def selected(k): 'selected' if str(value) == str(k) else None
         select_tag = tag.select(_name=name, _class=_class + ' ' + _class_input, _id=_id)
@@ -244,8 +258,8 @@ class Form(TAG):
         if field.widget:
             input = field.widget(name, value, _id=id, _class_input=_class_input)
         else:
-            # special treatment to selects, cause requires options
-            if field.type in ['select', 'multiple', 'radio', 'autocomplete', 'dynamic']:
+            # special treatment to selects, cause requires options            
+            if field.type in ['select', 'select_group', 'multiple', 'radio', 'autocomplete', 'dynamic']:
                 requires = field.requires
                 if not isinstance(requires, (list, tuple)):
                     requires = [requires]
