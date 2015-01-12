@@ -2,6 +2,9 @@
 """ ``response`` module.
 """
 
+import os
+
+from astrid.web.url import url
 from astrid.core.json import json_encode
 
 
@@ -409,6 +412,50 @@ class HTTPJSONResponse(Exception):
         response = HTTPResponse(
             'application/json; charset=' + self.encoding,
             self.encoding)
+        response.write_bytes(json_encode(self.items).encode(self.encoding))
+        #response.write_bytes(json_encode(self.items))
+        response.status_code = self.status_code
+        return response
+
+
+class HTTPJSONResponseTemplate(Exception):
+    def __init__(self, items, content=dict(), path_template='', status_code=200, cookies=None, encoding='UTF-8'):
+        self.status_code = status_code
+        self.items = items
+        self.encoding = encoding
+        self.content = content
+        self.path_template = path_template
+        self.cookies = cookies
+
+    def render(self, options):
+
+        content = self.content
+        if not isinstance(content, dict):
+            raise Exception('Content must be dictionary type dict()')
+        
+        content['url'] = url  # pass url function to the template
+
+        if self.path_template.startswith('/'):
+            norm_template_path = self.path_template[1:]
+        else:
+            norm_template_path = self.path_template
+        
+        filename = os.path.join(options['TEMPLATES_FOLDER'], norm_template_path)
+
+        if os.path.exists(filename):            
+            content = options['render_template'](filename = self.path_template,
+                                                path = options['TEMPLATES_FOLDER'],
+                                                context = content)            
+        else:
+            raise Exception("Template file doesn't exist")
+
+        self.items['content'] = unicode(content, 'utf-8')
+
+        response = HTTPResponse(
+            'application/json; charset=' + self.encoding,
+            self.encoding)
+        if self.cookies:
+            response.cookies = self.cookies
         response.write_bytes(json_encode(self.items).encode(self.encoding))
         #response.write_bytes(json_encode(self.items))
         response.status_code = self.status_code

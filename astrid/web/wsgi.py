@@ -3,7 +3,7 @@
 
 import re
 
-from astrid.http.response import HTTPResponse, HTTPError, http_error, HTTPRedirect, redirect, HTTPJSONResponse
+from astrid.http.response import HTTPResponse, HTTPError, http_error, HTTPRedirect, redirect, HTTPJSONResponse, HTTPJSONResponseTemplate
 from astrid.http.request import HTTPRequest
 from astrid.http.file import stream_file_handler
 from astrid.app.options import bootstrap_defaults
@@ -31,10 +31,12 @@ class WSGIApplication(object):
 
         try:
             response = expose.run_dispatcher(self.options)
-        except (HTTPError, HTTPRedirect, HTTPJSONResponse) as http_except:  # we handle http error
+        except (HTTPError, HTTPRedirect, HTTPJSONResponse, HTTPJSONResponseTemplate) as http_except:  # we handle http error
 
             if isinstance(http_except, HTTPJSONResponse):  # can handle HTTPJSONResponse
                 response = http_except.render()
+            elif isinstance(http_except, HTTPJSONResponseTemplate):  # can handle HTTPJSONResponseTemplate
+                response = http_except.render(self.options)
             elif 400 <= http_except.status_code <= 505:
                 if http_except.status_code in self.options['error_pages']:  # custom error pages
                     response = local.response

@@ -11,6 +11,7 @@ from astrid.core.uuid import UUID_EMPTY
 from astrid.core.uuid import parse_uuid
 from astrid.http.cookies import HTTPCookie
 from astrid.core.collections import last_item_adapter
+from astrid.http.response import HTTPJSONResponseTemplate
 
 
 __all__ = ['Form']
@@ -196,12 +197,13 @@ class Form(TAG):
         self.accepted = False
         self.valid_xsrf = False
         self.valid_resub = False
-        self.id_prefix = ''
+        self.id_prefix = attributes.get('_id_prefix', '')
         self.formname = 'form-'+hashlib.md5(
             ''.join(f.name for f in fields)).hexdigest()
         self.formkey_xsrf = None
         self.formkey_resub = None
         self.custom_elements = {}
+        self.enabled_xsrf = True
 
     def process(self, vars=None, keepvalues=False):
 
@@ -223,8 +225,11 @@ class Form(TAG):
                 if self.validate_xsrf_token():
                     self.valid_xsrf = True
 
+                # We have to generate a new token                
+                self.setxsrf_token()                
+                
                 # validate input
-                if self.valid_xsrf:
+                if self.valid_xsrf:                    
                     self.submitted = True
                     for field in self.fields:
                         value = self.input_vars.get(field.name)
@@ -242,9 +247,6 @@ class Form(TAG):
 
                     if not self.errors:
                         self.accepted = True
-
-                # We have to generate a new token
-                self.setxsrf_token()
 
         # reset default values in form
         if not self.submitted or (self.accepted and not keepvalues):
@@ -335,7 +337,7 @@ class Form(TAG):
             self.custom_elements[id]['label'] = label
             self.custom_elements[id]['widget'] = widget
 
-            if name in self.errors:
+            if name in self.errors:                
                 self.custom_elements[id]['error'] = tag.div(self.errors[name],
                                                             _class=ui.get('error_class', 'error-block'))
             else:
@@ -351,7 +353,7 @@ class Form(TAG):
         submit = tag.button(attr['submit'], _type='submit',
                         _class=ui.get('submit_class', 'btn btn-primary'))
         self.custom_elements['_submit'] = submit
-
+        
         if self.formkey_xsrf:
             self.custom_elements['_xsrf'] = tag.input(_name='xsrf-'+self.formname, _type='hidden',
                                                         _value=self.formkey_xsrf)
@@ -388,6 +390,45 @@ class Form(TAG):
     def xml(self):
         return self.attributes['formstyle'](self).xml()
 
+    def ajax(self, path_template='', error_text='Errors in forms', cookies=None):
+
+        if local.request.method == 'GET':
+            raise HTTPJSONResponseTemplate({'status': 'ok'}, 
+                                            dict(form=self), 
+                                            path_template=path_template, 
+                                            status_code=200,
+                                            cookies=cookies)
+        elif local.request.method == 'POST':
+
+            if self.enabled_xsrf and not self.valid_xsrf:
+                json_response = dict(
+                        error_text = 'CSRF validation fail! Try loading the form again!',
+                        error_form = self.errors
+                    )
+                raise HTTPJSONResponseTemplate(json_response, 
+                                            dict(form=self), 
+                                            path_template=path_template, 
+                                            status_code=400,
+                                            cookies=cookies)
+            if self.errors:                
+                json_response = dict(
+                    error_text = error_text,
+                    error_form = self.errors
+                )
+                raise HTTPJSONResponseTemplate(json_response, 
+                                            dict(form=self), 
+                                            path_template=path_template, 
+                                            status_code=400,
+                                            cookies=cookies)
+            else:
+                raise HTTPJSONResponseTemplate({'status': 'ok'}, 
+                                            dict(form=self), 
+                                            path_template=path_template, 
+                                            status_code=200,
+                                            cookies=cookies)
+        else:
+            raise HTTPJSONResponse('HTTP METHOD NOT SUPPORTED', 400)
+
     def getxsrf_token(self):
 
         if self.formkey_xsrf:
@@ -401,7 +442,7 @@ class Form(TAG):
             xsrf_token = cookies[form_name]
         else:
             xsrf_token = self.setxsrf_token()
-
+        
         self.formkey_xsrf = xsrf_token
         return xsrf_token
 
@@ -413,7 +454,7 @@ class Form(TAG):
 
         form_name = 'xsrf-' + self.formname
 
-        xsrf_token = shrink_uuid(uuid4())
+        xsrf_token = shrink_uuid(uuid4())        
         response.cookies.append(HTTPCookie(
                                 form_name,
                                 value=xsrf_token,
@@ -447,77 +488,9 @@ class Form(TAG):
         if form_name in form:
             xsrf_token_form = form[form_name][-1]
             xsrf_token_cookie = self.getxsrf_token()
-
+            
             return xsrf_token_form == xsrf_token_cookie\
                    and parse_uuid(xsrf_token_form) != UUID_EMPTY
         else:
             self.delxsrf_token()
             return False
-
-    def getresubmission(self):
-
-        if self.formkey_resub:
-            return self.formkey_resub
-
-        cookies = local.request.cookies
-
-        resubmission_name = 'resub-' + self.formname
-        if resubmission_name in cookies:
-            counter = cookies[resubmission_name]
-            self.formkey_resub = counter
-        else:
-            counter = '1'
-            self.setresubmission(counter)
-        return counter
-
-    def setresubmission(self, value):
-
-        options = local.options
-        request = local.request
-        response = local.response
-
-        resubmission_name = 'resub-' + self.formname
-        response.cookies.append(HTTPCookie(
-                        resubmission_name,
-                        value=value,
-                        path=request.root_path,
-                        httponly=True,
-                        options=options))
-        self.formkey_resub = value
-
-    def delresubmission(self):
-
-        options = local.options
-        request = local.request
-        response = local.response
-
-        #self.__resubmission = None
-        self.formkey_resub = None
-        resubmission_name = 'resub-' + self.formname
-        response.cookies = list(filter(lambda c: c.name != resubmission_name, response.cookies))
-        response.cookies.append(HTTPCookie.delete(
-                                resubmission_name,
-                                path=request.root_path,
-                                options=options))
-
-    def validate_resubmission(self):
-
-        request = local.request
-
-        if request.ajax:
-            return True
-
-        resubmission_name = 'resub-' + self.formname
-        form = request.form
-        if resubmission_name in form:
-            counter = form[resubmission_name][-1]
-            if counter == self.getresubmission():
-                try:
-                    counter = str(int(counter) + 1)
-                    self.setresubmission(counter)
-                    if int(counter) <= 2:
-                        return True
-
-                except ValueError:
-                    self.setresubmission('1')
-        return False
