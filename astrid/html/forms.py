@@ -11,7 +11,7 @@ from astrid.core.uuid import UUID_EMPTY
 from astrid.core.uuid import parse_uuid
 from astrid.http.cookies import HTTPCookie
 from astrid.core.collections import last_item_adapter
-from astrid.http.response import HTTPJSONResponseTemplate
+from astrid.http.response import HTTPJSONResponseTemplate, HTTPJSONResponse
 
 
 __all__ = ['Form']
@@ -249,7 +249,7 @@ class Form(TAG):
                         self.accepted = True
 
         # reset default values in form
-        if not self.submitted or (self.accepted and not keepvalues):
+        if not self.submitted or (self.accepted and not keepvalues) and self.input_vars:
             for field in self.fields:
                 self.input_vars[field.name] = field.default
 
@@ -329,7 +329,7 @@ class Form(TAG):
             id = self.id_prefix + name
             label = tag.label(field.label, _for=id,_class=ui.get('label_class', 'control-label'))
             value = self.input_vars.get(name)
-            if isinstance(value, list):
+            if field.type not in ['multiple'] and isinstance(value, list):
                 value = value[0]
             widget = self.get_field_widget(self, field, name, value, id, _class_input=ui.get('input_class', ''))
 

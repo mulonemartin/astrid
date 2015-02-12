@@ -30,6 +30,7 @@ class BaseCookieManager(object):
             httponly=True,
             options=options
         )
+        c.http_set_cookie('utf-8')
         response.cookies.append(c)
 
     def get(self, key):
@@ -64,8 +65,8 @@ class FlashManager(BaseCookieManager):
     type = 'info'
     div_char = '|' #'\x1f'
 
-    def encode(self, message, type):
-        return self.div_char.join([type, message])
+    def encode(self, message, type_flash):
+        return self.div_char.join([type_flash, unicode(message, 'utf-8')])
 
     def decode(self, encode):
         return encode.split(self.div_char, 1)
@@ -139,7 +140,6 @@ class FlashManager(BaseCookieManager):
                'message': xmlescape(self.message)}
 
         return xml
-
 
     def render_dialog(self):
         """Only work using twitter bootstrap, see: http://getbootstrap.com"""

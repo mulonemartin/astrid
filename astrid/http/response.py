@@ -456,6 +456,7 @@ class HTTPJSONResponseTemplate(Exception):
             self.encoding)
         if self.cookies:
             response.cookies = self.cookies
+
         response.write_bytes(json_encode(self.items).encode(self.encoding))
         #response.write_bytes(json_encode(self.items))
         response.status_code = self.status_code
