@@ -249,7 +249,7 @@ class Form(TAG):
                         self.accepted = True
 
         # reset default values in form
-        if not self.submitted or (self.accepted and not keepvalues) and self.input_vars:
+        if (not self.submitted or (self.accepted and not keepvalues)) and self.input_vars:
             for field in self.fields:
                 self.input_vars[field.name] = field.default
 
