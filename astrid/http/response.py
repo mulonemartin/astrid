@@ -403,15 +403,18 @@ class HTTPRedirect(Exception):
 
 
 class HTTPJSONResponse(Exception):
-    def __init__(self, items, status_code=200, encoding='UTF-8'):
+    def __init__(self, items, status_code=200, cookies=None, encoding='UTF-8'):
         self.status_code = status_code
         self.items = items
         self.encoding = encoding
+        self.cookies = cookies
 
     def render(self):
         response = HTTPResponse(
             'application/json; charset=' + self.encoding,
             self.encoding)
+        if self.cookies:
+            response.cookies = self.cookies
         response.write_bytes(json_encode(self.items).encode(self.encoding))
         #response.write_bytes(json_encode(self.items))
         response.status_code = self.status_code
