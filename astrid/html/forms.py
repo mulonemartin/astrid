@@ -146,7 +146,7 @@ class Form(TAG):
         return select_tag
 
     @staticmethod
-    def widget_hidden(name, value, _class='hidden', _id=None):
+    def widget_hidden(name, value, _class='hidden', _id=None, _class_input=''):
         return tag.input(_type='hidden', _name=name, _value=value or '',
                          _class=_class, _id=_id)
 
@@ -156,7 +156,7 @@ class Form(TAG):
                          _class=_class + ' ' + _class_input, _id=_id, _onchange="handleFiles(this.files)")
 
     @staticmethod
-    def widget_autocomplete(name, value, options, _class='string', _id=None, _class_input=''):
+    def widget_autocomplete(name, value, options, zero, _class='string', _id=None, _class_input=''):
         """
         <input type="text" class="span6 m-wrap" style="margin: 0 auto;" data-provide="typeahead" data-items="4"
         data-source="[&quot;Alabama&quot;,&quot;Alaska&quot;,&quot;Arizona&quot;,&quot;Arkansas&quot;
