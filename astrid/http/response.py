@@ -467,15 +467,18 @@ class HTTPJSONResponseTemplate(Exception):
 
 
 class JSONResponse(object):
-    def __init__(self, items, encoding='UTF-8'):
+    def __init__(self, items, encoding='UTF-8', cookies=None):
         """This render python objects to json objects"""
         self.items = items
         self.encoding = encoding
+        self.cookies = cookies
 
     def render(self):
         response = HTTPResponse(
             'application/json; charset=' + self.encoding,
             self.encoding)
+        if self.cookies:
+            response.cookies = self.cookies
         response.write_bytes(json_encode(self.items).encode(self.encoding))
         #response.write_bytes(json_encode(self.items))
         return response
