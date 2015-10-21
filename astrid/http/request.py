@@ -171,7 +171,7 @@ class HTTPRequest(object):
 
     @attribute
     def remote_addr_x_real(self):
-        """XREAL"""
+        """What key error"""
 
         addr = self.environ['HTTP_X_REAL_IP']
         if ',' in addr:
