@@ -173,7 +173,7 @@ class HTTPRequest(object):
     def remote_addr_x_real(self):
         """XREAL"""
 
-        addr = self.environ['X-Real-IP']
+        addr = self.environ['HTTP_X_REAL_IP']
         if ',' in addr:
             addr = addr.split(',', 1)[0].strip()
         return addr
